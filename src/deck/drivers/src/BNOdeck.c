@@ -28,7 +28,7 @@ float roll;
 static bool I2C_began;
 static bool reports_enabled;
 uint8_t acquired_data[19];
-static bool got_data;
+static uint8_t got_data;
 int status_log;
 
 void bno08xTask(void* arg);
@@ -77,12 +77,18 @@ void bno08xTask(void* arg)
   while (1) {
     vTaskDelay(M2T(1));
     sh2_SensorValue_t sensor_data;
+
+    if (wasReset()) {
+      enableReport(SH2_GAME_ROTATION_VECTOR, 10000);
+    }
+
+    got_data = 2;
     if (getSensorEvent(&sensor_data)) {
       got_data = 1;
       float qr = sensor_data.un.gameRotationVector.real;
       float qi = sensor_data.un.gameRotationVector.i;
-      float qj = sensor_data.un.gameRotationVector.i;
-      float qk = sensor_data.un.gameRotationVector.i;
+      float qj = sensor_data.un.gameRotationVector.j;
+      float qk = sensor_data.un.gameRotationVector.k;
 
 
       quaternionToEuler(qr, qi, qj, qk, &yaw, &pitch, &roll);

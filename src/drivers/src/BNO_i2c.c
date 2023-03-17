@@ -34,6 +34,8 @@ bool begin_I2C(uint8_t i2c_address, int32_t sensor_id) {
   _HAL.write = i2chal_write;
   _HAL.getTimeUs = hal_getTimeUs;
 
+  _reset_occurred = true;
+  // return true;
   return _init(sensor_id);
 }
 
