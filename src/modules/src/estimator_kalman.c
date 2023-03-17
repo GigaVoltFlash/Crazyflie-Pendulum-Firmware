@@ -94,8 +94,8 @@
 #define DEBUG_MODULE "ESTKALMAN"
 #include "debug.h"
 
-// Allows sending measurements to AE483 controller
-#include "controller_ae483.h"
+// Allows sending measurements to EOH controller
+#include "controller_eoh.h"
 
 // #define KALMAN_USE_BARO_UPDATE
 
@@ -363,17 +363,17 @@ static bool updateQueuedMeasurements(const uint32_t tick) {
         doneUpdate = true;
         break;
       case MeasurementTypePosition:
-        ae483UpdateWithPosition(&m.data.position);
+        eohUpdateWithPosition(&m.data.position);
         kalmanCoreUpdateWithPosition(&coreData, &m.data.position);
         doneUpdate = true;
         break;
       case MeasurementTypePose:
-        ae483UpdateWithPose(&m.data.pose);
+        eohUpdateWithPose(&m.data.pose);
         kalmanCoreUpdateWithPose(&coreData, &m.data.pose);
         doneUpdate = true;
         break;
       case MeasurementTypeDistance:
-        ae483UpdateWithDistance(&m.data.distance);
+        eohUpdateWithDistance(&m.data.distance);
         if(robustTwr){
             // robust KF update with UWB TWR measurements
             kalmanCoreRobustUpdateWithDistance(&coreData, &m.data.distance);
@@ -384,7 +384,7 @@ static bool updateQueuedMeasurements(const uint32_t tick) {
         doneUpdate = true;
         break;
       case MeasurementTypeTOF:
-        ae483UpdateWithTOF(&m.data.tof);
+        eohUpdateWithTOF(&m.data.tof);
         kalmanCoreUpdateWithTof(&coreData, &m.data.tof);
         doneUpdate = true;
         break;
@@ -393,8 +393,12 @@ static bool updateQueuedMeasurements(const uint32_t tick) {
         doneUpdate = true;
         break;
       case MeasurementTypeFlow:
-        ae483UpdateWithFlow(&m.data.flow);
+        eohUpdateWithFlow(&m.data.flow);
         kalmanCoreUpdateWithFlow(&coreData, &m.data.flow, &gyroLatest);
+        doneUpdate = true;
+        break;
+      case MeasurementTypePendulum:
+        eohUpdateWithPendulum(&m.data.pendulum);
         doneUpdate = true;
         break;
       case MeasurementTypeYawError:

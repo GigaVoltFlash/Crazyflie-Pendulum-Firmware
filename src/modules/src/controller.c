@@ -6,7 +6,7 @@
 #include "controller_pid.h"
 #include "controller_mellinger.h"
 #include "controller_indi.h"
-#include "controller_ae483.h"
+#include "controller_eoh.h"
 
 #include "autoconf.h"
 
@@ -27,7 +27,7 @@ static ControllerFcns controllerFunctions[] = {
   {.init = controllerPidInit, .test = controllerPidTest, .update = controllerPid, .name = "PID"},
   {.init = controllerMellingerInit, .test = controllerMellingerTest, .update = controllerMellinger, .name = "Mellinger"},
   {.init = controllerINDIInit, .test = controllerINDITest, .update = controllerINDI, .name = "INDI"},
-  {.init = controllerAE483Init, .test = controllerAE483Test, .update = controllerAE483, .name = "AE483"},
+  {.init = controllerEOHInit, .test = controllerEOHTest, .update = controllerEOH, .name = "EOH"},
 };
 
 

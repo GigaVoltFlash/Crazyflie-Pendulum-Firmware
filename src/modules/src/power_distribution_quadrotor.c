@@ -118,7 +118,7 @@ PARAM_ADD_CORE(PARAM_UINT32 | PARAM_PERSISTENT, idleThrust, &idleThrust)
  * This enables the use of powerSet() to set motor
  * power commands directly, rather than through the
  * use of control->thrust, control->roll, etc. This
- * is done by the AE483 controller, for example.
+ * is done by the EOH controller, for example.
  */
 PARAM_ADD(PARAM_UINT8, motorSetEnable, &motorSetEnable)
 PARAM_GROUP_STOP(powerDist)

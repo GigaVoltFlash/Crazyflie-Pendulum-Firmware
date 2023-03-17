@@ -40,7 +40,7 @@
 #include "platformservice.h"
 #include "syslink.h"
 #include "crtp_localization_service.h"
-#include "crtp_ae483_service.h"
+#include "crtp_eoh_service.h"
 
 static bool isInit;
 
@@ -64,7 +64,7 @@ void commInit(void)
   logInit();
   paramInit();
   locSrvInit();
-  ae483serviceInit();
+  eohserviceInit();
 
   //setup CRTP communication channel
   //TODO: check for USB first and prefer USB over radio

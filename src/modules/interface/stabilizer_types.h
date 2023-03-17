@@ -238,6 +238,16 @@ typedef struct flowMeasurement_s {
   float dt;           // Time during which pixels were accumulated
 } flowMeasurement_t;
 
+/** Pendulum measurement**/
+typedef struct pendulumMeasurement_s {
+  uint32_t timestamp;
+  float r_pos;
+  float s_pos;
+  float rdot_pos;
+  float sdot_pos;
+  float stdDev;
+} pendulumMeasurement_t;
+
 
 /** TOF measurement**/
 typedef struct tofMeasurement_s {

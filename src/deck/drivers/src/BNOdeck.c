@@ -9,6 +9,7 @@
 #include "system.h"
 #include <math.h>
 #include "BNO_i2c.h"
+#include "stabilizer_types.h"
 
 // Add constants for BNO here
 float l = 62.0; // cm
@@ -96,9 +97,17 @@ void bno08xTask(void* arg)
       // calculate r and s
       r_pos = l*(sinf(pitch));
       s_pos = -l*(sinf(roll)*cosf(pitch));
+
+      // TODO: Calculate rdot_pos and sdot_pos and add those below
+
+      // add r and s stuff to the pendulum struct
+      pendulumMeasurement_t pendulum;
+      pendulum.r_pos = r_pos;
+      pendulum.s_pos = s_pos;
+      pendulum.timestamp = usecTimestamp();
+      estimatorEnqueuePendulum(&pendulum);
     }
   }
-
 }
 
 
