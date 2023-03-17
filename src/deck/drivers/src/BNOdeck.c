@@ -28,7 +28,6 @@ float pitch;
 float roll;
 static bool I2C_began;
 static bool reports_enabled;
-uint8_t acquired_data[19];
 static uint8_t got_data;
 int status_log;
 
@@ -126,8 +125,7 @@ LOG_ADD(LOG_UINT8, got_data, &got_data)
 LOG_ADD(LOG_FLOAT, yaw, &yaw)
 LOG_ADD(LOG_FLOAT, pitch, &pitch)
 LOG_ADD(LOG_FLOAT, roll, &roll)
-LOG_ADD(LOG_FLOAT, r_pos, &r_pos)
-LOG_ADD(LOG_FLOAT, s_pos, &s_pos)
-LOG_ADD(LOG_UINT8, acquired_data, &acquired_data[16])
+LOG_ADD(LOG_FLOAT, r_pos_deck, &r_pos)
+LOG_ADD(LOG_FLOAT, s_pos_deck, &s_pos)
 LOG_ADD(LOG_INT32, status_log, &status_log)
 LOG_GROUP_STOP(BNO08x)

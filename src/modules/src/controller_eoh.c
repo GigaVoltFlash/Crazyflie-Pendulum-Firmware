@@ -138,6 +138,10 @@ void controllerEOH(control_t *control,
 LOG_GROUP_START(eohlog)
 LOG_ADD(LOG_UINT16,         num_tof,                &tof_count)
 LOG_ADD(LOG_UINT16,         num_flow,               &flow_count)
+LOG_ADD(LOG_FLOAT,          r_pos,                  &r_pos)
+LOG_ADD(LOG_FLOAT,          s_pos,                  &s_pos)
+LOG_ADD(LOG_FLOAT,          rdot_pos,               &rdot_pos)
+LOG_ADD(LOG_FLOAT,          sdot_pos,               &sdot_pos)
 LOG_GROUP_STOP(eohlog)
 
 //                1234567890123456789012345678 <-- max total length
