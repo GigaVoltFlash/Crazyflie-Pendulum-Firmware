@@ -77,6 +77,10 @@ void bno08xTask(void* arg)
   float last_rpos = 0;
   float last_spos = 0;
   uint64_t last_time = usecTimestamp();
+#define D_HISTORY_LEN 10
+  float rdot_hist[D_HISTORY_LEN] = {};
+  float sdot_hist[D_HISTORY_LEN] = {};
+  float conv_weights[D_HISTORY_LEN] = {0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};
   while (1) {
     vTaskDelay(M2T(1));
     sh2_SensorValue_t sensor_data;
@@ -108,14 +112,27 @@ void bno08xTask(void* arg)
       last_spos = s_pos;
       last_time = time;
 
+      memmove(rdot_hist, rdot_hist+1, sizeof(float) * (D_HISTORY_LEN - 1));
+      memmove(sdot_hist, sdot_hist+1, sizeof(float) * (D_HISTORY_LEN - 1));
+      rdot_hist[0] = rdot_pos;
+      sdot_hist[0] = sdot_pos;
+
+      float smooth_rdotpos = 0;
+      float smooth_sdotpos = 0;
+
+      for(int i = 0; i < D_HISTORY_LEN; i++){
+        smooth_rdotpos += rdot_hist[i] * conv_weights[i];
+        smooth_sdotpos += sdot_hist[i] * conv_weights[i];
+      }
+
       // TODO: Calculate rdot_pos and sdot_pos and add those below
 
       // add r and s stuff to the pendulum struct
       pendulumMeasurement_t pendulum;
       pendulum.r_pos = r_pos;
       pendulum.s_pos = s_pos;
-      pendulum.rdot_pos = rdot_pos;
-      pendulum.sdot_pos = sdot_pos;
+      pendulum.rdot_pos = smooth_rdotpos;
+      pendulum.sdot_pos = smooth_sdotpos;
       pendulum.timestamp = usecTimestamp();
       estimatorEnqueuePendulum(&pendulum);
     }
