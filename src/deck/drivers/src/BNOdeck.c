@@ -74,6 +74,9 @@ void bno08xTask(void* arg)
   // // Write stuff to sensor if needed
 
   // xLastWakeTime = xTaskGetTickCount();
+  float last_rpos = 0;
+  float last_spos = 0;
+  uint64_t last_time = usecTimestamp();
   while (1) {
     vTaskDelay(M2T(1));
     sh2_SensorValue_t sensor_data;
@@ -96,6 +99,14 @@ void bno08xTask(void* arg)
       // calculate r and s
       r_pos = l*(sinf(pitch));
       s_pos = -l*(sinf(roll)*cosf(pitch));
+      uint64_t time = usecTimestamp();
+      float dt = (time - last_time) / 1000000.f;
+      float rdot_pos = (r_pos - last_rpos)/dt;
+      float sdot_pos = (s_pos - last_spos)/dt;
+
+      last_rpos = r_pos;
+      last_spos = s_pos;
+      last_time = time;
 
       // TODO: Calculate rdot_pos and sdot_pos and add those below
 
@@ -103,6 +114,8 @@ void bno08xTask(void* arg)
       pendulumMeasurement_t pendulum;
       pendulum.r_pos = r_pos;
       pendulum.s_pos = s_pos;
+      pendulum.rdot_pos = rdot_pos;
+      pendulum.sdot_pos = sdot_pos;
       pendulum.timestamp = usecTimestamp();
       estimatorEnqueuePendulum(&pendulum);
     }
