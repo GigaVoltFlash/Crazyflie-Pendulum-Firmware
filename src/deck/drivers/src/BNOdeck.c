@@ -12,7 +12,7 @@
 #include "stabilizer_types.h"
 
 // Add constants for BNO here
-float l = 62.0; // cm
+float l = 0.320f; // m
 #define BNO08x_TASK_NAME "BNO08x"
 #define BNO08x_TASK_STACKSIZE (2 * configMINIMAL_STACK_SIZE)
 #define BNO08x_TASK_PRI 3
