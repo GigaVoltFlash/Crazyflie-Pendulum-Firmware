@@ -236,6 +236,10 @@ LOG_ADD(LOG_FLOAT,          r_pos,                  &r_pos)
 LOG_ADD(LOG_FLOAT,          s_pos,                  &s_pos)
 LOG_ADD(LOG_FLOAT,          rdot_pos,               &rdot_pos)
 LOG_ADD(LOG_FLOAT,          sdot_pos,               &sdot_pos)
+LOG_ADD(LOG_UINT16,         m_1,                     &m_1)
+LOG_ADD(LOG_UINT16,         m_2,                     &m_2)
+LOG_ADD(LOG_UINT16,         m_3,                     &m_3)
+LOG_ADD(LOG_UINT16,         m_4,                     &m_4)
 LOG_GROUP_STOP(eohlog)
 
 //                1234567890123456789012345678 <-- max total length
