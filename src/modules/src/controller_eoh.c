@@ -215,7 +215,7 @@ void controllerEOH(control_t *control,
       
       // Apply motor power commands
       powerSet(m_1, m_2, m_3, m_4);
-  }
+    }
 
   // if (RATE_DO_EXECUTE(POSITION_RATE, tick)) {
   //   // Whatever is in here executes at 100 Hz
