@@ -194,11 +194,11 @@ void controllerEOH(control_t *control,
       // Otherwise, motor power commands should be
       // chosen by the controller
 
-      if (r_pos > 0.05f) {
+      if (r_pos > 0.03f) {
         tau_x = 0.00264575f * (o_y - o_y_des) -0.00667388f * phi + 0.00209759f * v_y -0.00110243f * w_x;
         tau_y = -0.00223607f * (o_x - o_x_des) -0.00654857f * theta -0.00194559f * v_x -0.00108695f * w_y;
         tau_z = -0.00100000f * psi -0.00102777f * w_z;
-        f_z = -0.21447611f * (o_z - o_z_des) -0.18271100f * v_z + 0.4635f;
+        f_z = -0.21447611f * (o_z - o_z_des) -0.18271100f * v_z + 0.35f;
       } else {
       // FIXME
         tau_x = -0.00707107f * (o_y - o_y_des) -0.00699189f * v_y -0.02385166f * phi -0.00132248f * w_x -0.16967033f * s_pos -0.03065506f * sdot_pos;
