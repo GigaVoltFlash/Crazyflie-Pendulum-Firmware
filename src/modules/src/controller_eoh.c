@@ -5,6 +5,7 @@
 #include "param.h"
 #include "num.h"
 #include "math3d.h"
+#include <FreeRTOS.h>
 
 // Sensor measurements
 // - tof (from the z ranger on the flow deck)
@@ -58,6 +59,7 @@ static float v_z = 0.0f;
 static float w_x = 0.0f;
 static float w_y = 0.0f;
 static float w_z = 0.0f;
+static uint64_t pendulum_close_timestamp = 0;
 
 // An example parameter
 static bool use_observer = false;
@@ -193,8 +195,13 @@ void controllerEOH(control_t *control,
     } else {
       // Otherwise, motor power commands should be
       // chosen by the controller
+      if (r_pos*r_pos > (0.05f*0.05f)) {
+        pendulum_close_timestamp = usecTimestamp();
+      }
 
-      if (r_pos > 0.03f) {
+      bool do_controller = (usecTimestamp() - pendulum_close_timestamp) > 5000000;
+
+      if (!do_controller) {
         tau_x = 0.00264575f * (o_y - o_y_des) -0.00667388f * phi + 0.00209759f * v_y -0.00110243f * w_x;
         tau_y = -0.00223607f * (o_x - o_x_des) -0.00654857f * theta -0.00194559f * v_x -0.00108695f * w_y;
         tau_z = -0.00100000f * psi -0.00102777f * w_z;
