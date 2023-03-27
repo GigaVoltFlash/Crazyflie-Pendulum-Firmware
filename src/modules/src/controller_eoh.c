@@ -202,6 +202,7 @@ void controllerEOH(control_t *control,
       bool do_controller = (usecTimestamp() - pendulum_close_timestamp) > 5000000;
 
       if (!do_controller) {
+      // if (true) {
         tau_x = 0.00264575f * (o_y - o_y_des) -0.00667388f * phi + 0.00209759f * v_y -0.00110243f * w_x;
         tau_y = -0.00223607f * (o_x - o_x_des) -0.00654857f * theta -0.00194559f * v_x -0.00108695f * w_y;
         tau_z = -0.00100000f * psi -0.00102777f * w_z;
@@ -214,11 +215,17 @@ void controllerEOH(control_t *control,
         f_z = -0.31622777f * (o_z - o_z_des) -0.34857350f * v_z + 0.46354000f;
       }
 
-      // FIXME
-      m_1 = limitUint16( -3622138.5f * tau_x -3622138.5f * tau_y -27654867.3f * tau_z + 123152.7f * f_z );
-      m_2 = limitUint16( -3622138.5f * tau_x + 3622138.5f * tau_y + 27654867.3f * tau_z + 123152.7f * f_z );
-      m_3 = limitUint16( 3622138.5f * tau_x + 3622138.5f * tau_y -27654867.3f * tau_z + 123152.7f * f_z );
-      m_4 = limitUint16( 3622138.5f * tau_x -3622138.5f * tau_y + 27654867.3f * tau_z + 123152.7f * f_z );
+      // STANDARD MOTORS
+      // m_1 = limitUint16( -3622138.5f * tau_x -3622138.5f * tau_y -27654867.3f * tau_z + 123152.7f * f_z );
+      // m_2 = limitUint16( -3622138.5f * tau_x + 3622138.5f * tau_y + 27654867.3f * tau_z + 123152.7f * f_z );
+      // m_3 = limitUint16( 3622138.5f * tau_x + 3622138.5f * tau_y -27654867.3f * tau_z + 123152.7f * f_z );
+      // m_4 = limitUint16( 3622138.5f * tau_x -3622138.5f * tau_y + 27654867.3f * tau_z + 123152.7f * f_z );
+
+      // THRUST UPGRADE
+      m_1 = limitUint16( -2913752.9f * tau_x -2913752.9f * tau_y -35112359.6f * tau_z + 94697.0f * f_z );
+      m_2 = limitUint16( -2913752.9f * tau_x + 2913752.9f * tau_y + 35112359.6f * tau_z + 94697.0f * f_z );
+      m_3 = limitUint16( 2913752.9f * tau_x + 2913752.9f * tau_y -35112359.6f * tau_z + 94697.0f * f_z );
+      m_4 = limitUint16( 2913752.9f * tau_x -2913752.9f * tau_y + 35112359.6f * tau_z + 94697.0f * f_z );
       
       // Apply motor power commands
       powerSet(m_1, m_2, m_3, m_4);
