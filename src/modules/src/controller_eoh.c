@@ -5,6 +5,7 @@
 #include "param.h"
 #include "num.h"
 #include "math3d.h"
+#include "led.h"
 #include <FreeRTOS.h>
 
 // Sensor measurements
@@ -187,6 +188,8 @@ void controllerEOH(control_t *control,
     r = tof_distance;
     a_z = 9.81f * sensors->acc.z;
 
+    ledSetAll();
+
     if (setpoint->mode.z == modeDisable) {
       // If there is no desired position, then all
       // motor power commands should be zero
@@ -195,7 +198,7 @@ void controllerEOH(control_t *control,
     } else {
       // Otherwise, motor power commands should be
       // chosen by the controller
-      if (r_pos*r_pos > (0.05f*0.05f)) {
+      if (r_pos*r_pos > (0.15f*0.15f)) {
         pendulum_close_timestamp = usecTimestamp();
       }
 
@@ -206,13 +209,28 @@ void controllerEOH(control_t *control,
         tau_x = 0.00264575f * (o_y - o_y_des) -0.00667388f * phi + 0.00209759f * v_y -0.00110243f * w_x;
         tau_y = -0.00223607f * (o_x - o_x_des) -0.00654857f * theta -0.00194559f * v_x -0.00108695f * w_y;
         tau_z = -0.00100000f * psi -0.00102777f * w_z;
-        f_z = -0.21447611f * (o_z - o_z_des) -0.18271100f * v_z + 0.35f;
+        f_z = -0.21447611f * (o_z - o_z_des) -0.18271100f * v_z + 0.38f;
       } else {
-      // FIXME
-        tau_x = -0.00707107f * (o_y - o_y_des) -0.00699189f * v_y -0.02385166f * phi -0.00132248f * w_x -0.16967033f * s_pos -0.03065506f * sdot_pos;
-        tau_y = 0.00707107f * (o_x - o_x_des) + 0.00699388f * v_x -0.02391362f * theta -0.00132862f * w_y + 0.16992423f * r_pos + 0.03070090f * rdot_pos;
-        tau_z = -0.00100000f * psi -0.00102029f * w_z;
-        f_z = -0.31622777f * (o_z - o_z_des) -0.34857350f * v_z + 0.46354000f;
+        // // FIRST CONTROLLER
+        // tau_x = -0.00258199f * (o_y - o_y_des) -0.00237009f * v_y -0.00917857f * phi -0.00064859f * w_x -0.06005176f * s_pos -0.01084695f * sdot_pos;
+        // tau_y = 0.00258199f * (o_x - o_x_des) + 0.00237182f * v_x -0.00922317f * theta -0.00065287f * w_y + 0.06023984f * r_pos + 0.01088092f * rdot_pos;
+        // tau_z = -0.00018257f * psi -0.00021550f * w_z;
+        // f_z = -0.05773503f * (o_z - o_z_des) -0.09297825f * v_z + 0.48f;
+
+        // // AGRESSIVE R AND S CONTROLLER
+        // tau_x = -0.00447214f * (o_y - o_y_des) -0.01037113f * v_y -0.03253422f * phi -0.00121365f * w_x -0.46690199f * s_pos -0.06284148f * sdot_pos;
+        // tau_y = 0.00447214f * (o_x - o_x_des) + 0.01037235f * v_x -0.03267014f * theta -0.00122137f * w_y + 0.46741366f * r_pos + 0.06296543f * rdot_pos;
+        // tau_z = -0.00031623f * psi -0.00035029f * w_z;
+        // f_z = -0.10000000f * (o_z - o_z_des) -0.13856406f * v_z + 0.45126000f;
+
+        // LOW R AND S COSTS
+        tau_x = -0.00223607f * (o_y - o_y_des) -0.00207496f * v_y -0.00856394f * phi -0.00062161f * w_x -0.05456218f * s_pos -0.00985442f * sdot_pos;
+        tau_y = 0.00223607f * (o_x - o_x_des) + 0.00207659f * v_x -0.00860772f * theta -0.00062585f * w_y + 0.05474547f * r_pos + 0.00988752f * rdot_pos;
+        tau_z = -0.00015811f * psi -0.00019066f * w_z;
+        f_z = -0.05000000f * (o_z - o_z_des) -0.08426150f * v_z + 0.47126000f;
+
+        // HIGH ANGULAR RATES CONTROL
+
       }
 
       // STANDARD MOTORS
@@ -222,10 +240,16 @@ void controllerEOH(control_t *control,
       // m_4 = limitUint16( 3622138.5f * tau_x -3622138.5f * tau_y + 27654867.3f * tau_z + 123152.7f * f_z );
 
       // THRUST UPGRADE
-      m_1 = limitUint16( -2913752.9f * tau_x -2913752.9f * tau_y -35112359.6f * tau_z + 94697.0f * f_z );
-      m_2 = limitUint16( -2913752.9f * tau_x + 2913752.9f * tau_y + 35112359.6f * tau_z + 94697.0f * f_z );
-      m_3 = limitUint16( 2913752.9f * tau_x + 2913752.9f * tau_y -35112359.6f * tau_z + 94697.0f * f_z );
-      m_4 = limitUint16( 2913752.9f * tau_x -2913752.9f * tau_y + 35112359.6f * tau_z + 94697.0f * f_z );
+      // m_1 = limitUint16( -2913752.9f * tau_x -2913752.9f * tau_y -35112359.6f * tau_z + 94697.0f * f_z );
+      // m_2 = limitUint16( -2913752.9f * tau_x + 2913752.9f * tau_y + 35112359.6f * tau_z + 94697.0f * f_z );
+      // m_3 = limitUint16( 2913752.9f * tau_x + 2913752.9f * tau_y -35112359.6f * tau_z + 94697.0f * f_z );
+      // m_4 = limitUint16( 2913752.9f * tau_x -2913752.9f * tau_y + 35112359.6f * tau_z + 94697.0f * f_z );
+
+      // NEW THRUST UPGRADE
+      m_1 = limitUint16( -2725092.7f * tau_x -2725092.7f * tau_y -33333333.3f * tau_z + 89928.1f * f_z );
+      m_2 = limitUint16( -2725092.7f * tau_x + 2725092.7f * tau_y + 33333333.3f * tau_z + 89928.1f * f_z );
+      m_3 = limitUint16( 2725092.7f * tau_x + 2725092.7f * tau_y -33333333.3f * tau_z + 89928.1f * f_z );
+      m_4 = limitUint16( 2725092.7f * tau_x -2725092.7f * tau_y + 33333333.3f * tau_z + 89928.1f * f_z );
       
       // Apply motor power commands
       powerSet(m_1, m_2, m_3, m_4);

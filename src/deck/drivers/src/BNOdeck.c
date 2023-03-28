@@ -36,7 +36,7 @@ void bno08xTask(void* arg);
 // Deck driver init function
 static void bno08xInit()
 {
-  // return;
+  // return;  
   if (isInit)
     return;
 
